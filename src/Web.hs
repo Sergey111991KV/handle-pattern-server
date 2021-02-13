@@ -9,7 +9,7 @@ import Entity.ErrorServer
 import qualified Data.Text                as T
 import Data.ByteString
 import Data.ByteString.Builder
-import Log
+import qualified Logger as L
 import Control.Monad.Catch 
 import Control.Monad.Except
 import Control.Monad.Reader    
@@ -22,23 +22,31 @@ data Config = Config {
     port :: Int
     }
 
+data Handle = Handle
+    { hConfig   :: Config
+    , hLogger   :: L.Handle 
+    }
 
+withHandle
+    :: Config  -> L.Handle ->  (Handle -> IO a) -> IO a
+withHandle config  logger  f =
+    f $ Handle config  logger 
 
 newtype App a =
   App
-    { unApp :: ReaderT Config (ExceptT ErrorServer IO) a
+    { unApp :: ReaderT Handle (ExceptT ErrorServer IO) a
     }
-  deriving (Applicative, Functor, Monad, MonadReader Config, MonadIO, MonadThrow, MonadError ErrorServer )
+  deriving (Applicative, Functor, Monad, MonadReader Handle, MonadIO, MonadThrow, MonadError ErrorServer )
 
-runApp :: Config -> App a -> IO (Either ErrorServer a)
+runApp :: Handle -> App a -> IO (Either ErrorServer a)
 runApp conf  app =  runExceptT $ runReaderT  (unApp  app) conf
 
 
 
-run :: Config -> IO ()
-run config = do
-    HTTP.run (port config) $  \request respond -> do
-      eitherResponse <- runApp config $ route request
+run :: Handle -> IO ()
+run handle = do
+    HTTP.run (port $ hConfig handle) $  \request respond -> do
+      eitherResponse <- runApp handle $ route request
       response <- either (\e -> do
           serverErrorResponse e) pure eitherResponse
       respond response

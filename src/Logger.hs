@@ -1,15 +1,13 @@
-module Log where
+module Logger where
 
 import GHC.Generics 
 import Data.Aeson (FromJSON, ToJSON)
 
 
-type LogWriteInConfig = LogWrite
-
-data LogConfig =
-  LogConfig
+data Config =
+  Config
     { logFile :: FilePath
-    , logLevelForFile :: LogWriteInConfig
+    , logLevelForFile :: LogWrite
     , logConsole :: Bool
     }
   deriving (Show, Generic)
@@ -24,13 +22,13 @@ data LogWrite
 
 instance ToJSON LogWrite
 instance FromJSON LogWrite
-instance ToJSON LogConfig
-instance FromJSON LogConfig
+instance ToJSON Config
+instance FromJSON Config
 
 
 data Handle = Handle
-    { hConfig    :: LogConfig
+    { hConfig    :: Config
     }
 
-withHandle :: LogConfig -> (Handle -> IO a) -> IO a
+withHandle :: Config -> (Handle -> IO a) -> IO a
 withHandle config f =  f Handle {hConfig = config}

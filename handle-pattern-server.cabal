@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6582bf0e1ece9d8c0340b8ef297e86c56287c4b02e1dc5e325f84390fe918019
+-- hash: 03263423813961c3c53cfb7a35eecd37cce002d140b531a70192b04b2a12bd64
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -29,7 +29,7 @@ library
   exposed-modules:
       Entity.ErrorServer
       Lib
-      Log
+      Logger
       Web
   hs-source-dirs:
       src

@@ -7,21 +7,29 @@ import qualified Network.Wai as HTTP
 
 import qualified Web as W
 import Entity.ErrorServer
-import Log
+import qualified Logger as L
 
 
 
-data Config = Config {
-    web :: W.Config
+data Config = Config 
+    { confWeb :: W.Config 
+    , logger :: L.Config
     }
 
 
 
 state :: Config
 state = Config {
-    web = W.Config 3000
+    confWeb = W.Config 3000 ,
+    logger = L.Config {
+        L.logFile = "FilePath",
+        L.logLevelForFile = L.Debug,
+        L.logConsole = True
+    }
  }
 
 someFunc :: IO ()
 someFunc = do
-    W.run  (web state)
+    L.withHandle (logger state) $ \l ->
+        W.withHandle (confWeb state) l $ \web -> 
+            W.run  web
