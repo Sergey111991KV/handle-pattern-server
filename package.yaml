@@ -21,9 +21,22 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- text
+- http-client
+- http-types 
+- warp
+- wai
+- mtl
+- aeson
+- exceptions
+- bytestring
 
 library:
+  when:
+    condition: false
+    other-modules: Paths_handle_pattern_server
   source-dirs: src
+
 
 executables:
   handle-pattern-server-exe:
@@ -35,6 +48,12 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - handle-pattern-server
+
+
+default-extensions:
+- OverloadedStrings
+- DeriveGeneric
+- GeneralizedNewtypeDeriving
 
 tests:
   handle-pattern-server-test:
