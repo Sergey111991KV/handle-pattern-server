@@ -30,6 +30,8 @@ dependencies:
 - aeson
 - exceptions
 - bytestring
+- parsec
+
 
 library:
   when:
@@ -54,6 +56,7 @@ default-extensions:
 - OverloadedStrings
 - DeriveGeneric
 - GeneralizedNewtypeDeriving
+- ScopedTypeVariables
 
 tests:
   handle-pattern-server-test:

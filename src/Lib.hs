@@ -4,32 +4,26 @@ module Lib
 import qualified Network.Wai.Handler.Warp as HTTP
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
-
-import qualified Web as W
+import Control.Exception
+import qualified Web as Web
 import Entity.ErrorServer
-import qualified Logger as L
+import qualified Logger as Logger
+import qualified Config.Config as Config
+import qualified Data.Text.IO as TIO
+import qualified Data.Text                as T
 
-
-
-data Config = Config 
-    { confWeb :: W.Config 
-    , logger :: L.Config
-    }
-
-
-
-state :: Config
-state = Config {
-    confWeb = W.Config 3000 ,
-    logger = L.Config {
-        L.logFile = "FilePath",
-        L.logLevelForFile = L.Debug,
-        L.logConsole = True
-    }
- }
+runConfig :: Config.Config -> IO ()
+runConfig config = do
+    Logger.withHandle (Config.cLogger config) $ \l ->
+        Web.withHandle (Config.cWeb config) l $ \web -> 
+            Web.run  web
 
 someFunc :: IO ()
 someFunc = do
-    L.withHandle (logger state) $ \l ->
-        W.withHandle (confWeb state) l $ \web -> 
-            W.run  web
+    configFromFile :: Either SomeException T.Text <- try $ TIO.readFile "server.config" 
+    either print  (\conf -> do
+                caseOfConf <- Config.parseConf conf
+                either    (\err -> print (show err ++ "take option for server" ))
+                          runConfig 
+                          caseOfConf
+                                        ) configFromFile

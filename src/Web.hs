@@ -6,29 +6,28 @@ import qualified Network.Wai as HTTP
 import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
 import Entity.ErrorServer
-import qualified Data.Text                as T
 import Data.ByteString
 import Data.ByteString.Builder
-import qualified Logger as L
+import qualified Logger as Logger
 import Control.Monad.Catch 
 import Control.Monad.Except
 import Control.Monad.Reader    
 import Control.Monad.Trans     
-
+import GHC.Generics 
 
 
 
 data Config = Config {
     port :: Int
-    }
+    }  deriving (Show, Generic)
 
 data Handle = Handle
     { hConfig   :: Config
-    , hLogger   :: L.Handle 
+    , hLogger   :: Logger.Handle 
     }
 
 withHandle
-    :: Config  -> L.Handle ->  (Handle -> IO a) -> IO a
+    :: Config  -> Logger.Handle ->  (Handle -> IO a) -> IO a
 withHandle config  logger  f =
     f $ Handle config  logger 
 

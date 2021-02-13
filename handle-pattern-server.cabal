@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 03263423813961c3c53cfb7a35eecd37cce002d140b531a70192b04b2a12bd64
+-- hash: 74b7a87bee07524083430a9650d587d378b093ed513d5727e8ca455d877e8f6c
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -27,13 +27,15 @@ source-repository head
 
 library
   exposed-modules:
+      Config.Config
+      Config.ParseConfig
       Entity.ErrorServer
       Lib
       Logger
       Web
   hs-source-dirs:
       src
-  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving
+  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -42,6 +44,7 @@ library
     , http-client
     , http-types
     , mtl
+    , parsec
     , text
     , wai
     , warp
@@ -56,7 +59,7 @@ executable handle-pattern-server-exe
       Paths_handle_pattern_server
   hs-source-dirs:
       app
-  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving
+  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -67,6 +70,7 @@ executable handle-pattern-server-exe
     , http-client
     , http-types
     , mtl
+    , parsec
     , text
     , wai
     , warp
@@ -79,7 +83,7 @@ test-suite handle-pattern-server-test
       Paths_handle_pattern_server
   hs-source-dirs:
       test
-  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving
+  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -90,6 +94,7 @@ test-suite handle-pattern-server-test
     , http-client
     , http-types
     , mtl
+    , parsec
     , text
     , wai
     , warp
