@@ -5,6 +5,7 @@ import Entity.ErrorServer
 import qualified Text.Parsec as Pars
 import qualified Logger as Logger
 import qualified Web as Web
+import qualified Web.Route as Web
 import qualified Data.Text                as T
 import GHC.Generics 
 import Data.Maybe

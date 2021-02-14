@@ -18,6 +18,13 @@ packages:
       sha256: 580b3808ee3ee06468d56808639a6b46615ff385c64d977423817434d17a9888
   original:
     hackage: base64-bytestring-1.0.0.3
+- completed:
+    hackage: attoparsec-0.13.2.4@sha256:5941a05141a61239e8d6c4f2c9876bec3765d786766721b8474b8625febf914a,5796
+    pantry-tree:
+      size: 5231
+      sha256: 623047a3f229b2cd082928f7d78c5cac15558504949e5999fad734eff820fa30
+  original:
+    hackage: attoparsec-0.13.2.4
 snapshots:
 - completed:
     size: 563099

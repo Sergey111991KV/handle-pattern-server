@@ -1,7 +1,44 @@
 module Web.Route where
 
 
+import qualified Network.Wai.Handler.Warp as HTTP
+import qualified Network.HTTP.Types as HTTP
+import qualified Network.Wai as HTTP
+import qualified Data.Text                as T
+import qualified Data.Text.Encoding       as T
+import Data.ByteString
+import Data.ByteString.Builder
+import Control.Monad.Catch 
+import Control.Monad.Except
+import Control.Monad.Reader    
+import Control.Monad.Trans     
+import GHC.Generics 
+import Data.Aeson
+import qualified Data.ByteString.Lazy as BL
 
+import qualified Logger as Logger
+import qualified Database as Database
+import Entity.ExportEntity
+
+
+
+
+
+
+
+
+data Config = Config {
+    port :: Int
+    }  deriving (Show, Generic)
+
+data Handle = Handle
+    { hConfig   :: Config
+    , hLogger   :: Logger.Handle 
+    , hDatabase :: Database.Handle
+    }
+
+type HTTPMonad m
+   = (Monad m, MonadIO m, MonadError ErrorServer m, MonadReader Handle m)
 
 
 

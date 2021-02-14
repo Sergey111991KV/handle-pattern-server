@@ -36,7 +36,8 @@ dependencies:
 - resource-pool
 - time
 - data-has
-
+- attoparsec
+- classy-prelude
 
 library:
   when:
@@ -58,12 +59,16 @@ executables:
 
 
 default-extensions:
+- NoImplicitPrelude
 - OverloadedStrings
 - DeriveGeneric
 - GeneralizedNewtypeDeriving
 - ScopedTypeVariables
 - ConstraintKinds
 - FlexibleContexts
+- StandaloneDeriving
+- FlexibleInstances
+- UndecidableInstances
 
 tests:
   handle-pattern-server-test:

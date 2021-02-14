@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 98e4b8dd6ecba752a86149faff313093ccac95d73c3f4d694ece0693954b5996
+-- hash: fe6db61927d7da47427eab82d221c7f04b74ec8e5c1c79a503f798d34ff520ec
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -31,20 +31,30 @@ library
       Config.ParseConfig
       Database
       Entity.Auth
+      Entity.Author
+      Entity.Category
+      Entity.Comment
+      Entity.Draft
       Entity.ErrorServer
       Entity.ExportEntity
       Entity.ImportLibrary
+      Entity.News
+      Entity.ParseRowEntity
+      Entity.Tag
       Entity.User
       Lib
       Logger
       Web
+      Web.Route
   hs-source-dirs:
       src
-  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables ConstraintKinds FlexibleContexts
+  default-extensions: NoImplicitPrelude OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables ConstraintKinds FlexibleContexts StandaloneDeriving FlexibleInstances UndecidableInstances
   build-depends:
       aeson
+    , attoparsec
     , base >=4.7 && <5
     , bytestring
+    , classy-prelude
     , data-has
     , exceptions
     , http-client
@@ -69,12 +79,14 @@ executable handle-pattern-server-exe
       Paths_handle_pattern_server
   hs-source-dirs:
       app
-  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables ConstraintKinds FlexibleContexts
+  default-extensions: NoImplicitPrelude OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables ConstraintKinds FlexibleContexts StandaloneDeriving FlexibleInstances UndecidableInstances
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , attoparsec
     , base >=4.7 && <5
     , bytestring
+    , classy-prelude
     , data-has
     , exceptions
     , handle-pattern-server
@@ -98,12 +110,14 @@ test-suite handle-pattern-server-test
       Paths_handle_pattern_server
   hs-source-dirs:
       test
-  default-extensions: OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables ConstraintKinds FlexibleContexts
+  default-extensions: NoImplicitPrelude OverloadedStrings DeriveGeneric GeneralizedNewtypeDeriving ScopedTypeVariables ConstraintKinds FlexibleContexts StandaloneDeriving FlexibleInstances UndecidableInstances
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , attoparsec
     , base >=4.7 && <5
     , bytestring
+    , classy-prelude
     , data-has
     , exceptions
     , handle-pattern-server

@@ -17,20 +17,10 @@ import qualified Data.ByteString.Lazy as BL
 
 import qualified Logger as Logger
 import qualified Database as Database
-
-
-
+import Web.Route
 import Entity.ExportEntity
 
-data Config = Config {
-    port :: Int
-    }  deriving (Show, Generic)
 
-data Handle = Handle
-    { hConfig   :: Config
-    , hLogger   :: Logger.Handle 
-    , hDatabase :: Database.Handle
-    }
 
 withHandle
     :: Config  -> Logger.Handle ->  Database.Handle -> (Handle -> IO a) -> IO a
@@ -47,7 +37,6 @@ runApp :: Handle -> App a -> IO (Either ErrorServer a)
 runApp conf  app =  runExceptT $ runReaderT  (unApp  app) conf
 
 
-
 run :: Handle -> IO ()
 run handle = do
     HTTP.run (port $ hConfig handle) $  \request respond -> do
@@ -55,15 +44,6 @@ run handle = do
       response <- either (\e -> do
           serverErrorResponse e) pure eitherResponse
       respond response
-
-
-
-type HTTPMonad m
-   = (Monad m, MonadIO m, MonadError ErrorServer m, MonadReader Handle m)
-
-
-
-
 
 
 
