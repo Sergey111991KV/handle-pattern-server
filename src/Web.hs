@@ -5,17 +5,22 @@ import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
 import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
-import Entity.ErrorServer
 import Data.ByteString
 import Data.ByteString.Builder
-import qualified Logger as Logger
 import Control.Monad.Catch 
 import Control.Monad.Except
 import Control.Monad.Reader    
 import Control.Monad.Trans     
 import GHC.Generics 
+import Data.Aeson
+import qualified Data.ByteString.Lazy as BL
+
+import qualified Logger as Logger
+import qualified Database as Database
 
 
+
+import Entity.ExportEntity
 
 data Config = Config {
     port :: Int
@@ -24,12 +29,13 @@ data Config = Config {
 data Handle = Handle
     { hConfig   :: Config
     , hLogger   :: Logger.Handle 
+    , hDatabase :: Database.Handle
     }
 
 withHandle
-    :: Config  -> Logger.Handle ->  (Handle -> IO a) -> IO a
-withHandle config  logger  f =
-    f $ Handle config  logger 
+    :: Config  -> Logger.Handle ->  Database.Handle -> (Handle -> IO a) -> IO a
+withHandle config  logger dataFunc f =
+    f $ Handle config logger dataFunc
 
 newtype App a =
   App
@@ -52,6 +58,8 @@ run handle = do
 
 
 
+type HTTPMonad m
+   = (Monad m, MonadIO m, MonadError ErrorServer m, MonadReader Handle m)
 
 
 
@@ -99,11 +107,18 @@ serverErrorResponse err = do
 successResponse' :: ByteString -> HTTP.Response
 successResponse'  b = HTTP.responseBuilder HTTP.status200 [("Content-Type", "application/json")] $ byteString  b
 
-route :: Monad m
+route :: HTTPMonad m
   => HTTP.Request -> m HTTP.Response
 route req = do
     case methodAndPath req of   
             GET  ["auth","exit"] -> do
                 return $ successResponse'   "auth exit" 
+            POST ["user"]  -> do
+                reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                (user :: User) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ BL.fromStrict reqBody)
+                db <- asks hDatabase
+                Database.createUser db user
+                return $ successResponse'   "create user" 
+
 
 

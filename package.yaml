@@ -31,6 +31,11 @@ dependencies:
 - exceptions
 - bytestring
 - parsec
+- postgresql-simple
+- postgresql-simple-migration
+- resource-pool
+- time
+- data-has
 
 
 library:
@@ -57,6 +62,8 @@ default-extensions:
 - DeriveGeneric
 - GeneralizedNewtypeDeriving
 - ScopedTypeVariables
+- ConstraintKinds
+- FlexibleContexts
 
 tests:
   handle-pattern-server-test:

@@ -8,23 +8,15 @@ import qualified Web as Web
 import qualified Data.Text                as T
 import GHC.Generics 
 import Data.Maybe
-
-  -- Config
-  --   { logFile :: FilePath
-  --   , logLevelForFile :: LogWrite
-  --   , logConsole :: Bool
-  --   }
-
-
--- data Config = Config {
---     port :: Int
---     }
+import qualified Database as Database
+import Data.ByteString.Internal
 
 
 
 data Config =
   Config
    { cLogger      :: Logger.Config
+    , cDatabase   :: Database.Config
     , cWeb        :: Web.Config
     }
   deriving (Generic, Show)
@@ -48,11 +40,18 @@ configVKwithPair (Right configPair) = do
                   , Logger.logLevelForFile = Logger.Debug
                   , Logger.logConsole = True
     },
+    cDatabase = Database.Config {
+        Database.configUrl = packChars $  fromMaybe "postgres" postgresOption
+        , Database.configStripeCount = 2
+        , Database.configMaxOpenConnPerStripe = 5
+        , Database.configIdleConnTimeout = 10
+    },
     cWeb = Web.Config {
           Web.port = read $ fromMaybe "3000" port
     }
   }
   where
+    postgresOption = lookup "postgres" configPair
     port =  lookup "port" configPair
 
 

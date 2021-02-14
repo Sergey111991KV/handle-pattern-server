@@ -3,7 +3,21 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: postgresql-simple-migration-0.1.15.0@sha256:0e24e96908430f5caf9c1c1d9ca7c5c108e4e0409a255e2cbd77e8cd252dbb02,3879
+    pantry-tree:
+      size: 766
+      sha256: c2843bfe43b804992bc913f33ec6b2c6cb0fc99c6d931b6ff85894e8aef9a99e
+  original:
+    hackage: postgresql-simple-migration-0.1.15.0
+- completed:
+    hackage: base64-bytestring-1.0.0.3@sha256:6c82d900465345e30ff0eeb9a1374fbd2955c8e5ca6206e03669f04575830f88,2242
+    pantry-tree:
+      size: 848
+      sha256: 580b3808ee3ee06468d56808639a6b46615ff385c64d977423817434d17a9888
+  original:
+    hackage: base64-bytestring-1.0.0.3
 snapshots:
 - completed:
     size: 563099

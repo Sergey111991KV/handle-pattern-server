@@ -8,7 +8,9 @@ data ErrorServer =
         ErrorConnection | 
         ErrorAccess     |
         ErrorParseConfig |
-        ErrorGetConfig  
+        ErrorGetConfig  |
+        DataErrorPostgreSQL |
+        ErrorConvert
         deriving (Read, Show)
 
 errorText :: ErrorServer -> T.Text

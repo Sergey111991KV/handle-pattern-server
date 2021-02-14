@@ -11,12 +11,14 @@ import qualified Logger as Logger
 import qualified Config.Config as Config
 import qualified Data.Text.IO as TIO
 import qualified Data.Text                as T
+import qualified Database as Postgr
 
 runConfig :: Config.Config -> IO ()
 runConfig config = do
-    Logger.withHandle (Config.cLogger config) $ \l ->
-        Web.withHandle (Config.cWeb config) l $ \web -> 
-            Web.run  web
+    Logger.withHandle (Config.cLogger config) $ \logger ->
+        Postgr.withHandle (Config.cDatabase config) $ \pConf ->
+            Web.withHandle (Config.cWeb config) logger pConf  $ \web -> 
+                Web.run  web
 
 someFunc :: IO ()
 someFunc = do
