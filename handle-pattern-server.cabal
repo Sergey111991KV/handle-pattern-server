@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 41507e6a55e685b39901cc99217ab5d278fac24358f2ac7e2fec1704a5876910
+-- hash: c0874a97be4f49a79caa02a94be9044fdabf281b047a10b84a8ed4302e082667
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -56,6 +56,7 @@ library
       Lib
       Logger
       Web
+      Web.HelpFunction
       Web.Route
   hs-source-dirs:
       src

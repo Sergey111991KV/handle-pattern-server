@@ -11,7 +11,8 @@ data ErrorServer =
         DataErrorPostgreSQL |
         DataErrorPostgreSQLPublish |
         ErrorSortedTextNotSupposed |
-        ErrorConvert 
+        ErrorConvert |
+        ErrorGetCookie
         
         deriving (Read, Show)
 
