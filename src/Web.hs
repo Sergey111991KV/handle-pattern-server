@@ -17,7 +17,7 @@ import Data.Aeson
 import qualified Data.ByteString.Lazy as BL
 
 import qualified Logger as Logger
-import qualified Database as Database
+import qualified Database.ExportDatabase as Database
 import Web.Route
 import Entity.ExportEntity
 

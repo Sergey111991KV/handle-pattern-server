@@ -1,0 +1,1 @@
+module Database.GetOne where

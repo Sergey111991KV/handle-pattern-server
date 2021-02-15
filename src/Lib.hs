@@ -13,14 +13,14 @@ import qualified Logger as Logger
 import qualified Config.Config as Config
 
 import qualified Data.Text                as T
-import qualified Database as Postgr
+import qualified Database.ExportDatabase as Database
 
 
 
 runConfig :: Config.Config -> IO ()
 runConfig config = do
     Logger.withHandle (Config.cLogger config) $ \logger ->
-        Postgr.withHandle (Config.cDatabase config) $ \pConf ->
+        Database.withHandle (Config.cDatabase config) $ \pConf ->
             Web.withHandle (Config.cWeb config) logger pConf  $ \web -> 
                 Web.run  web
 

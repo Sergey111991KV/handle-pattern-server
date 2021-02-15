@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fe6db61927d7da47427eab82d221c7f04b74ec8e5c1c79a503f798d34ff520ec
+-- hash: a88d9351dab2c7132731464e88d3fc813b635670f402fc43995ee8aac7a81e1a
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -29,7 +29,16 @@ library
   exposed-modules:
       Config.Config
       Config.ParseConfig
-      Database
+      Database.Create
+      Database.DatabaseCommon
+      Database.Delete
+      Database.Edite
+      Database.ExportDatabase
+      Database.GetAll
+      Database.GetOne
+      Database.ImportDatabase
+      Database.Publish
+      Database.Remove
       Entity.Auth
       Entity.Author
       Entity.Category
