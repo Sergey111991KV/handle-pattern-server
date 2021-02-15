@@ -10,7 +10,9 @@ data ErrorServer =
         ErrorGetConfig  |
         DataErrorPostgreSQL |
         DataErrorPostgreSQLPublish |
+        ErrorSortedTextNotSupposed |
         ErrorConvert 
+        
         deriving (Read, Show)
 
 errorText :: ErrorServer -> Text

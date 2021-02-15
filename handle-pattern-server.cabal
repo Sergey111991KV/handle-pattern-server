@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ab0449b9f173ff45e69edf921f8eeec9fd1a952da167e4f43355d98a62a3a913
+-- hash: 41507e6a55e685b39901cc99217ab5d278fac24358f2ac7e2fec1704a5876910
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -29,15 +29,18 @@ library
   exposed-modules:
       Config.Config
       Config.ParseConfig
+      Database.Access
       Database.Create
       Database.DatabaseCommon
       Database.Delete
       Database.Edite
       Database.ExportDatabase
+      Database.FilterNews
       Database.GetAll
       Database.GetOne
       Database.ImportDatabase
       Database.Publish
+      Database.SortedNews
       Entity.Auth
       Entity.Author
       Entity.Category
@@ -72,6 +75,7 @@ library
     , postgresql-simple
     , postgresql-simple-migration
     , resource-pool
+    , string-random
     , text
     , time
     , wai
@@ -105,6 +109,7 @@ executable handle-pattern-server-exe
     , postgresql-simple
     , postgresql-simple-migration
     , resource-pool
+    , string-random
     , text
     , time
     , wai
@@ -136,6 +141,7 @@ test-suite handle-pattern-server-test
     , postgresql-simple
     , postgresql-simple-migration
     , resource-pool
+    , string-random
     , text
     , time
     , wai

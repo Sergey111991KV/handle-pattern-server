@@ -38,6 +38,7 @@ dependencies:
 - data-has
 - attoparsec
 - classy-prelude
+- string-random
 
 library:
   when:
