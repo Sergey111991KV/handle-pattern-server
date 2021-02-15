@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a88d9351dab2c7132731464e88d3fc813b635670f402fc43995ee8aac7a81e1a
+-- hash: ab0449b9f173ff45e69edf921f8eeec9fd1a952da167e4f43355d98a62a3a913
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -38,7 +38,6 @@ library
       Database.GetOne
       Database.ImportDatabase
       Database.Publish
-      Database.Remove
       Entity.Auth
       Entity.Author
       Entity.Category

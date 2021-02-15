@@ -9,7 +9,8 @@ data ErrorServer =
         ErrorParseConfig |
         ErrorGetConfig  |
         DataErrorPostgreSQL |
-        ErrorConvert
+        DataErrorPostgreSQLPublish |
+        ErrorConvert 
         deriving (Read, Show)
 
 errorText :: ErrorServer -> Text
