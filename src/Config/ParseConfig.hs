@@ -1,28 +1,28 @@
 module Config.ParseConfig where
 
-import qualified Data.Text                as T
-import  Text.Parsec 
+import ClassyPrelude
+import qualified Text.Parsec as Parsec
 
 type ConfigPair = (String, String)
 
-toPairs :: Parsec T.Text () ConfigPair
+toPairs :: Parsec.Parsec Text () ConfigPair
 toPairs = do
-     key <- many1 (letter <|> digit <|> char ':')
-     spaces
-     value <- many1 (letter <|> digit <|> char ':') <|> helpText
+     key <- Parsec.many1 (Parsec.letter <|> Parsec.digit <|> Parsec.char ':')
+     Parsec.spaces
+     value <- Parsec.many1 (Parsec.letter <|> Parsec.digit <|> Parsec.char ':') <|> helpText
      return (key,value)
 
-myParser :: Parsec T.Text () [ConfigPair]
-myParser = sepBy toPairs mySeparator
+myParser :: Parsec.Parsec Text () [ConfigPair]
+myParser = Parsec.sepBy toPairs mySeparator
 
-mySeparator :: Parsec T.Text () ()
+mySeparator :: Parsec.Parsec Text () ()
 mySeparator = do
-    _ <- char '\n'
+    _ <- Parsec.char '\n'
     return ()
 
-helpText :: Parsec T.Text () String
+helpText :: Parsec.Parsec Text () String
 helpText = do
-     _ <-   char '"'
-     value <- many1  (letter <|> digit <|> space  <|> oneOf "'=")
-     _ <-   char '"'
+     _ <-   Parsec.char '"'
+     value <- Parsec.many1  (Parsec.letter <|> Parsec.digit <|> Parsec.space  <|> Parsec.oneOf "'=")
+     _ <-   Parsec.char '"'
      return value 

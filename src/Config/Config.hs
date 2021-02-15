@@ -1,17 +1,15 @@
 module Config.Config where
 
+import ClassyPrelude
+
 import Config.ParseConfig (ConfigPair, myParser)
 import Entity.ErrorServer 
 import qualified Text.Parsec as Pars
 import qualified Logger as Logger
 import qualified Web as Web
 import qualified Web.Route as Web
-import qualified Data.Text                as T
-import GHC.Generics 
-import Data.Maybe
 import qualified Database as Database
-import Data.ByteString.Internal
-
+import qualified Prelude as P
 
 
 data Config =
@@ -22,13 +20,13 @@ data Config =
     }
   deriving (Generic, Show)
 
-parseConf ::  T.Text -> IO (Either ErrorServer Config)
+parseConf :: Text -> IO (Either ErrorServer Config)
 parseConf = return . configVKwithPair . getPairFromFile
 
--- charToWord8 :: Char -> Word8
--- charToWord8 = toEnum . fromEnum
+charToWord8 :: Char -> Word8
+charToWord8 = toEnum . fromEnum
 
-getPairFromFile :: T.Text -> Either Pars.ParseError [ConfigPair]
+getPairFromFile :: Text -> Either Pars.ParseError [ConfigPair]
 getPairFromFile = Pars.parse myParser ""
 
 configVKwithPair ::
@@ -42,13 +40,13 @@ configVKwithPair (Right configPair) = do
                   , Logger.logConsole = True
     },
     cDatabase = Database.Config {
-        Database.configUrl = packChars $  fromMaybe "postgres" postgresOption
+        Database.configUrl = pack  $ fmap charToWord8 $ fromMaybe "postgres" postgresOption
         , Database.configStripeCount = 2
         , Database.configMaxOpenConnPerStripe = 5
         , Database.configIdleConnTimeout = 10
     },
     cWeb = Web.Config {
-          Web.port = read $ fromMaybe "3000" port
+          Web.port = P.read $ fromMaybe "3000" port
     }
   }
   where

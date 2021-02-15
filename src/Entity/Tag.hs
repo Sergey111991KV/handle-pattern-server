@@ -1,21 +1,25 @@
 module Entity.Tag  where
 
 
+import ClassyPrelude
+  ( Applicative(pure)
+  , Eq
+  , Generic
+  , Int
+  , IsString(fromString)
+  , Show
+  , String
+  , ($)
+  , unpack
+  )
 import qualified Data.Attoparsec.ByteString.Char8 as A
 import Database.PostgreSQL.Simple.FromField (FromField(..))
 import Database.PostgreSQL.Simple.Types (PGArray(PGArray))
-
 import Entity.ImportLibrary
-  ( Action(Escape, Many, Plain)
-  , FromJSON
-  , FromRow
-  , ToField(..)
-  , ToJSON
-  , ToRow
-  , fromPGRow'
-  , intDec
-  , textContent
-  )
+import Entity.ParseRowEntity
+
+
+import qualified Prelude as P
 
 data Tag =
   Tag
@@ -58,4 +62,4 @@ parseTag = do
   _ <- A.char ','
   nameTag' <- textContent
   _ <- A.char ')'
-  pure (Tag (read $ unpack idTag') (unpack nameTag'))
+  pure (Tag (P.read $ ClassyPrelude.unpack idTag') (unpack nameTag'))

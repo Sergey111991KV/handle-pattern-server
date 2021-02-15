@@ -3,7 +3,7 @@ module Entity.Auth where
 
 import Database.PostgreSQL.Simple.FromField
 import Entity.ImportLibrary
-             
+import ClassyPrelude            
 
 type IsAdmin = Bool
 

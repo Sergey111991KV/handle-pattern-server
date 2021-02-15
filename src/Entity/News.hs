@@ -1,6 +1,6 @@
 module Entity.News  where
 
-
+import ClassyPrelude
 import Database.PostgreSQL.Simple.Types (PGArray(fromPGArray))
 import Entity.Author (Author(Author))
 import Entity.Category

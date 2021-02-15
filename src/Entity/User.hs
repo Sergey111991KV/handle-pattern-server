@@ -1,6 +1,6 @@
 module Entity.User  where
 
-
+import ClassyPrelude
 import Database.PostgreSQL.Simple.FromField 
 import Entity.Auth 
 import Entity.ImportLibrary

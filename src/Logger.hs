@@ -1,6 +1,6 @@
 module Logger where
 
-import GHC.Generics 
+import ClassyPrelude
 import Data.Aeson (FromJSON, ToJSON)
 
 
@@ -30,5 +30,5 @@ data Handle = Handle
     { hConfig    :: Config
     }
 
-withHandle :: Config -> (Handle -> IO a) -> IO a
+withHandle :: Config -> (Logger.Handle -> IO a) -> IO a
 withHandle config f =  f Handle {hConfig = config}

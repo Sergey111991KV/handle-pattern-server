@@ -1,8 +1,7 @@
 module Entity.ErrorServer where
 
-import qualified Data.Text                as T
-
-
+import Entity.ImportLibrary 
+import ClassyPrelude
 
 data ErrorServer = 
         ErrorConnection | 
@@ -13,6 +12,6 @@ data ErrorServer =
         ErrorConvert
         deriving (Read, Show)
 
-errorText :: ErrorServer -> T.Text
-errorText err = T.pack $ show err
+errorText :: ErrorServer -> Text
+errorText err = pack $ show err
   

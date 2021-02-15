@@ -1,7 +1,7 @@
 module Entity.Category   where
 
 
-
+import ClassyPrelude
 import qualified Data.Attoparsec.ByteString.Char8 as A
 import Database.PostgreSQL.Simple.FromField (FromField(..), fromJSONField)
 import Entity.ImportLibrary
@@ -9,6 +9,7 @@ import Entity.ParseRowEntity
 
 import Database.PostgreSQL.Simple.Types (PGArray(PGArray))
 
+import qualified Prelude as P
 
 data Category =
   Category
@@ -89,7 +90,7 @@ parseCategoryRaw = do
   _ <- A.char ')'
   pure
     (CategoryRaw
-       (read $ unpack idCat)
+       (P.read $ ClassyPrelude.unpack idCat)
        nameCat
        (parseMaybeInt parentCat))
 

@@ -3,7 +3,7 @@ module Entity.Author  where
 import Database.PostgreSQL.Simple.FromField (FromField(..), fromJSONField)
 import Entity.Auth (UserId)
 import Entity.ImportLibrary
-  
+import ClassyPrelude  
 
 data Author =
   Author

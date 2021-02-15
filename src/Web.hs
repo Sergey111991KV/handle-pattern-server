@@ -1,5 +1,6 @@
 module Web where
 
+import ClassyPrelude
 import qualified Network.Wai.Handler.Warp as HTTP
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
@@ -23,21 +24,21 @@ import Entity.ExportEntity
 
 
 withHandle
-    :: Config  -> Logger.Handle ->  Database.Handle -> (Handle -> IO a) -> IO a
+    :: Config  -> Logger.Handle ->  Database.Handle -> (Web.Route.Handle -> IO a) -> IO a
 withHandle config  logger dataFunc f =
     f $ Handle config logger dataFunc
 
 newtype App a =
   App
-    { unApp :: ReaderT Handle (ExceptT ErrorServer IO) a
+    { unApp :: ReaderT Web.Route.Handle (ExceptT ErrorServer IO) a
     }
-  deriving (Applicative, Functor, Monad, MonadReader Handle, MonadIO, MonadThrow, MonadError ErrorServer )
+  deriving (Applicative, Functor, Monad, MonadReader Web.Route.Handle, MonadIO, MonadThrow, MonadError ErrorServer )
 
-runApp :: Handle -> App a -> IO (Either ErrorServer a)
+runApp :: Web.Route.Handle -> App a -> IO (Either ErrorServer a)
 runApp conf  app =  runExceptT $ runReaderT  (unApp  app) conf
 
 
-run :: Handle -> IO ()
+run :: Web.Route.Handle -> IO ()
 run handle = do
     HTTP.run (port $ hConfig handle) $  \request respond -> do
       eitherResponse <- runApp handle $ route request

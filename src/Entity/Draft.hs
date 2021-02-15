@@ -2,7 +2,7 @@
 
 module Entity.Draft where
 
-
+import ClassyPrelude
 import Entity.ImportLibrary 
 
 import qualified Database.PostgreSQL.Simple.Types as P

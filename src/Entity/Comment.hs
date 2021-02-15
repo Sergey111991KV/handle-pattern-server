@@ -11,6 +11,11 @@ import Entity.ImportLibrary
 import Entity.ParseRowEntity
 
 
+import ClassyPrelude
+ 
+
+import qualified Prelude as P
+
 data Comment =
   Comment
     { idComment :: Int
@@ -50,11 +55,11 @@ parseComment = do
   _ <- A.char ')'
   pure
     (Comment
-       (read $ unpack idC)
+       (P.read $ ClassyPrelude.unpack idC)
        text
        (timeFromByteString dataC)
-       (read $ unpack newId)
-       (UserId $ read $ unpack userId))
+       (P.read $ ClassyPrelude.unpack newId)
+       (UserId $ P.read $ ClassyPrelude.unpack userId))
 
 instance FromJSON (PGArray Comment)
 

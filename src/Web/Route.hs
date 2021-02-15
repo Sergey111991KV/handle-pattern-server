@@ -1,18 +1,15 @@
 module Web.Route where
 
-
+import ClassyPrelude
 import qualified Network.Wai.Handler.Warp as HTTP
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
-import qualified Data.Text                as T
-import qualified Data.Text.Encoding       as T
-import Data.ByteString
 import Data.ByteString.Builder
 import Control.Monad.Catch 
 import Control.Monad.Except
 import Control.Monad.Reader    
 import Control.Monad.Trans     
-import GHC.Generics 
+
 import Data.Aeson
 import qualified Data.ByteString.Lazy as BL
 
@@ -38,7 +35,7 @@ data Handle = Handle
     }
 
 type HTTPMonad m
-   = (Monad m, MonadIO m, MonadError ErrorServer m, MonadReader Handle m)
+   = (Monad m, MonadIO m, MonadError ErrorServer m, MonadReader Web.Route.Handle m)
 
 
 
@@ -56,7 +53,7 @@ methodAndPath req =
     getMethod =
       either (error . show) id $ HTTP.parseMethod (HTTP.requestMethod req)
 
-type Router = [T.Text] 
+type Router = [Text] 
 
 data API
   = POST Router

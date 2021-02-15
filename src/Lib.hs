@@ -4,14 +4,18 @@ module Lib
 import qualified Network.Wai.Handler.Warp as HTTP
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
-import Control.Exception
+import ClassyPrelude
+import qualified Data.Text.IO as TIO
+
 import qualified Web as Web
 import Entity.ErrorServer
 import qualified Logger as Logger
 import qualified Config.Config as Config
-import qualified Data.Text.IO as TIO
+
 import qualified Data.Text                as T
 import qualified Database as Postgr
+
+
 
 runConfig :: Config.Config -> IO ()
 runConfig config = do

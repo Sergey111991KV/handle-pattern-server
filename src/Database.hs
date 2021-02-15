@@ -1,20 +1,18 @@
 module Database where
 
-import GHC.Generics 
+
 import Data.Aeson 
-import qualified Data.Text                as T
 import Data.Pool 
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.Migration
 import Control.Monad.Catch
 import Data.Time
-import Data.ByteString
 import Data.Has
 import Control.Monad.Catch 
 import Control.Monad.Except
 import Control.Monad.Reader    
 import Control.Monad.Trans 
-
+import ClassyPrelude
 import Entity.ExportEntity
 
 
@@ -47,7 +45,7 @@ data Handle = Handle
     , hPool   :: Pool Connection
     }
 
-withHandle :: Config -> (Handle -> IO a) -> IO a
+withHandle :: Config -> (Database.Handle -> IO a) -> IO a
 withHandle cfg action = do
      withPool cfg $ \pool -> do
         -- migrate state
@@ -62,7 +60,7 @@ withConn pool action = do
   liftIO . withResource pool $ \conn -> action conn
 
 
-createUser :: PG  m => Handle ->  User -> m ()
+createUser :: PG  m => Database.Handle ->  User -> m ()
 createUser h user = do
   
         let qUser = "INSERT INTO usernews (name_user, lastname , login_user , password_user , avatar_user , datacreate_user , admin , authoris)  VALUES (?,?,?,?,?,?,?,?);"
