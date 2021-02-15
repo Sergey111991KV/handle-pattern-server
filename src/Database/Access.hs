@@ -75,7 +75,7 @@ findUserIdBySession h sesId = do
     qry = "select user_news_id from session where key = ? "
 
 
-checkAdminAccess :: PG  m => Database.DatabaseCommon.Handle -> SessionId -> m (Bool)
+checkAdminAccess :: PG  m => Database.DatabaseCommon.Handle -> SessionId -> m Bool
 checkAdminAccess h sesId = do
     idU <- findUserIdBySession h sesId
     resultAdmin <- withConn (hPool h) $ \conn -> query conn qry idU :: IO [Only Bool]
@@ -88,7 +88,7 @@ checkAdminAccess h sesId = do
           throwError DataErrorPostgreSQL
       where qry = "select admin from usernews where id_user = ? "
 
-checkAuthorAccess :: PG  m => Database.DatabaseCommon.Handle -> SessionId -> m (Bool)
+checkAuthorAccess :: PG  m => Database.DatabaseCommon.Handle -> SessionId -> m Bool
 checkAuthorAccess h sesId = do
     idA <- findUserIdBySession h sesId
     resultAuthor <- withConn (hPool h) $ \conn -> query conn qry [idA] :: IO [Only Bool]

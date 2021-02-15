@@ -16,7 +16,13 @@ import Text.Parsec as Parsec
 --         -- (encodeUtf8 $ fromStrict $ errorText err)
 
 
+serverNotAcceessAuthor :: Monad m =>  m HTTP.Response
+serverNotAcceessAuthor = do
+        pure $ HTTP.responseLBS HTTP.status404 [] "Not Author Access" 
 
+serverNotAcceessAdmin :: Monad m =>  m HTTP.Response
+serverNotAcceessAdmin = do
+         pure $ HTTP.responseLBS HTTP.status404 [] "Not Admin Access" 
 
 serverErrorResponse :: Monad m => ErrorServer ->  m HTTP.Response
 serverErrorResponse err = do
@@ -44,8 +50,3 @@ parserCookie = do
 setCookie :: MonadError ErrorServer m => SessionId  -> m HTTP.Response
 setCookie  (SessionId sess)  = return $ HTTP.responseLBS HTTP.status200 [("SetCookie", "sId=" ++ encodeUtf8 sess)] "SET-COOKIE"
 
--- successResponse :: forall a. ToJSON a  => a  -> HTTP.Response
--- successResponse  b = HTTP.responseBuilder HTTP.status200 [("Content-Type", "application/json")] $ fromEncoding $ toEncoding  b
-
--- successResponse' :: ByteString -> HTTP.Response
--- successResponse'  b = HTTP.responseBuilder HTTP.status200 [("Content-Type", "application/json")] $ byteString  b
