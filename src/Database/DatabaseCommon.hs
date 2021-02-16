@@ -2,7 +2,11 @@ module Database.DatabaseCommon where
 
 import Database.ImportDatabase
 import ClassyPrelude 
-
+import Database.PostgreSQL.Simple.Migration
+  ( MigrationCommand(MigrationDirectory, MigrationInitialization)
+  , MigrationResult(MigrationError)
+  , runMigrations
+  )
 
 data Config = Config
     { configUrl ::  ByteString
@@ -11,6 +15,18 @@ data Config = Config
     , configIdleConnTimeout :: NominalDiffTime
     } deriving (Show)
 
+migrate :: Pool Connection -> IO ()
+migrate pool =
+  withResource pool $ \conn -> do
+    result <- withTransaction conn (runMigrations False conn cmds)
+    case result of
+      MigrationError err -> throwString err
+      _ -> return ()
+  where
+    cmds =
+      [ MigrationInitialization
+      , MigrationDirectory "src/Migrations"
+      ]
 
 withPool :: Config -> (Pool Connection -> IO a)  -> IO a
 withPool cfg  = Database.ImportDatabase.bracket initPool cleanPool 
@@ -36,7 +52,7 @@ data Handle = Handle
 withHandle :: Config -> (Database.DatabaseCommon.Handle -> IO a) -> IO a
 withHandle cfg action = do
      withPool cfg $ \pool -> do
-        -- migrate state
+        migrate pool
         action $ Handle cfg pool
 
 
