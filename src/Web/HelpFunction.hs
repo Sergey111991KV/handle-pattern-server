@@ -23,6 +23,9 @@ import Control.Monad.Except ( MonadError(throwError) )
 import Text.Parsec as Parsec
     ( Parsec, char, digit, letter, many1, (<|>), parse )
 
+import qualified Data.List as L (intersperse)
+
+
 serverNotAcceessAuthor :: Monad m =>  m HTTP.Response
 serverNotAcceessAuthor = do
         pure $ HTTP.responseLBS HTTP.status404 [] "Not Author Access" 
@@ -57,3 +60,14 @@ parserCookie = do
 setCookie :: MonadError ErrorServer m => SessionId  -> m HTTP.Response
 setCookie  (SessionId sess)  = return $ HTTP.responseLBS HTTP.status200 [("SetCookie", "sId=" ++ encodeUtf8 sess)] "SET-COOKIE"
 
+
+withLogging :: HTTP.Middleware
+withLogging app req respond =
+  app
+    req
+    (\res -> do
+--        let status = textify $ HTTP.statusCode $ HTTP.responseStatus res
+--            method = textify $ HTTP.requestMethod req
+--            path = mconcat $ "/" : L.intersperse "/" (HTTP.pathInfo req)
+--        logDebug $ method <> " " <> path <> " " <> status
+       respond res)

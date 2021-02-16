@@ -30,7 +30,7 @@ runConfig config = do
     Logger.withHandle (Config.cLogger config) $ \logger ->
         Database.withHandle (Config.cDatabase config) $ \pConf ->
             Web.withHandle (Config.cWeb config) logger pConf  $ \web -> 
-                Web.run  web
+                Web.run web logger
 
 someFunc :: IO ()
 someFunc = do

@@ -16,7 +16,7 @@ import GHC.Generics
 import Data.Aeson
 import qualified Data.ByteString.Lazy as BL
 
-import qualified Logger as Logger
+import qualified Logger
 import qualified Database.ExportDatabase as Database
 import Web.Route
 import Entity.ExportEntity
@@ -38,12 +38,17 @@ runApp :: Web.Route.Handle -> App a -> IO (Either ErrorServer a)
 runApp conf  app =  runExceptT $ runReaderT  (unApp  app) conf
 
 
-run :: Web.Route.Handle -> IO ()
-run handle = do
-    HTTP.run (port $ hConfig handle) $  \request respond -> do
-      eitherResponse <- runApp handle $ route request
+run :: Web.Route.Handle ->  Logger.Handle -> IO ()
+run webH logH = do
+    HTTP.run (port $ hConfig webH) $  \request respond -> do
+      eitherResponse <- runApp webH $ route request
       response <- either (\e -> do
-          serverErrorResponse e) pure eitherResponse
+          Logger.hLogError logH "error"
+          serverErrorResponse e) ( \response' -> do
+            Logger.hLogDebug logH "good" 
+            return response'
+            ) eitherResponse
+      
       respond response
 
 

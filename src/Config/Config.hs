@@ -36,7 +36,7 @@ configVKwithPair (Right configPair) = do
   Right Config {
     cLogger = Logger.Config {
                   Logger.logFile = "log-journal"
-                  , Logger.logLevelForFile = Logger.Debug
+                  , Logger.logLevelForFile = Logger.Error 
                   , Logger.logConsole = True
     },
     cDatabase = Database.Config {
