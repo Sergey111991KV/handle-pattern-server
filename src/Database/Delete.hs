@@ -34,10 +34,8 @@ removeNews h idE = do
     result <- withConn (hPool h) $ \conn -> execute conn q [idE]
     case result of
       1 -> do
-        -- writeLogD "delete news good!"
         return ()
       _ -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
 
 removeTag :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m ()
@@ -46,10 +44,8 @@ removeTag h idE = do
     result <- withConn (hPool h) $ \conn -> execute conn q [idE]
     case result of
       1 -> do
-        -- writeLogD "delete tag good!"
         return ()
       _ -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
 
 removeCategory :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m ()
@@ -58,10 +54,8 @@ removeCategory h idE = do
     result <- withConn (hPool h) $ \conn -> execute conn q [idE]
     case result of
       1 -> do
-        -- writeLogD "delete category1 good!"
         return ()
       _ -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
 
 
@@ -72,8 +66,6 @@ removeDraft h idEnt idA  = do
       result <- withConn (hPool h) $ \conn -> execute conn q (idA, idEnt)
       case result of
         1 -> do
-        --   writeLogD "delete draft good!"
           return  ()
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL ++ " delete draft")
           throwError DataErrorPostgreSQL

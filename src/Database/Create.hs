@@ -30,10 +30,8 @@ createAuthor h author = do
           execute conn q (userIdRaw $ idLinkUser author, description author)
       case result of
         1 -> do
-        --   writeLogD "create author good!"
           return ()
         _ -> do
-        --   writeLogE  (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 
@@ -45,20 +43,16 @@ createCategory h cat = do
           result <- withConn (hPool h) $ \conn -> execute conn qMainCat (nameCategory cat, Null)
           case result of
             1 -> do
-            --   writeLogD "create category good!"
               return ()
             _ -> do
-            --   writeLogE (errorText DataErrorPostgreSQL)
               throwError DataErrorPostgreSQL
         Just pCat -> do
           let qNestedCat = "INSERT INTO category (name_category,parent_category) VALUES (?,?);"
           result <- withConn (hPool h) $ \conn -> execute conn qNestedCat (nameCategory cat , idCategory pCat)
           case result of
             1 -> do
-            --   writeLogD "create category good!"
               createCategory h pCat
             _ -> do
-            --   writeLogE (errorText DataErrorPostgreSQL)
               throwError DataErrorPostgreSQL
 
 
@@ -77,10 +71,8 @@ createComment h comment = do
             , usersIdComments comment)
       case result of
         1 -> do
-        --   writeLogD "create comment good!"
           return ()
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 
@@ -103,10 +95,8 @@ createDraft h draft = do
             , idAuthorDraft draft)
       case result of
         1 -> do
-        --   writeLogD "create draft good!"
           return  ()
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 createTag :: PG  m => Database.DatabaseCommon.Handle ->  Tag -> m ()
@@ -115,9 +105,7 @@ createTag h tag = do
       result <- withConn (hPool h) $ \conn -> execute conn qTag [nameTag tag]
       case result of
         1 -> do
-        --   writeLogD "create tag good!"
           return  ()
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
     

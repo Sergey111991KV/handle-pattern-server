@@ -5,11 +5,19 @@ import qualified Network.Wai.Handler.Warp as HTTP
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
 import ClassyPrelude
+    ( ($),
+      Show(show),
+      IO,
+      Either,
+      SomeException,
+      either,
+      (++),
+      print,
+      try )
 import qualified Data.Text.IO as TIO
 
-import qualified Web as Web
-import Entity.ErrorServer
-import qualified Logger as Logger
+import qualified Web
+import qualified Logger 
 import qualified Config.Config as Config
 
 import qualified Data.Text                as T

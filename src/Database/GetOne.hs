@@ -2,8 +2,26 @@ module Database.GetOne where
 
 
 import Database.ImportDatabase
-import Database.DatabaseCommon 
-import ClassyPrelude 
+    ( Monad(return),
+      MonadError(throwError),
+      query,
+      Draft,
+      Tag,
+      ErrorServer(DataErrorPostgreSQL),
+      UserId,
+      convertCategoryRawArray,
+      Category,
+      CategoryRaw,
+      Author,
+      User,
+      Comment,
+      convertNewsRaw,
+      News,
+      NewsRaw )
+import Database.DatabaseCommon
+    ( requestForPost, withConn, Handle(hPool), PG ) 
+import ClassyPrelude
+    ( ($), Int, IO, (++), print, null, head, impureNonNull ) 
 
 
 
@@ -13,10 +31,8 @@ getOneAuthor h idE = do
       i <- withConn (hPool h) $ \conn -> query conn qAuthor [idE] :: IO [Author]
       case i of
         [x] -> do
-        --   writeLogD "getOne Author success!"
           return  x
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 getOneUser :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m User
@@ -25,10 +41,8 @@ getOneUser h idE = do
       i <- withConn (hPool h) $ \conn -> query conn qUser [idE] :: IO [User]
       case i of
         [x] -> do
-        --   writeLogD "getOne User success!"
           return  x
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 getOneNews :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m News
@@ -38,10 +52,8 @@ getOneNews h idE = do
       print i
       case i of
         [x] -> do
-        --   writeLogD "getOne News success!"
           return $ convertNewsRaw x
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 getOneTag :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m Tag
@@ -50,10 +62,8 @@ getOneTag h idE = do
       i <- withConn (hPool h) $ \conn -> query conn qTag [idE] :: IO [Tag]
       case i of
         [x] -> do
-        --   writeLogD "getOne Tag success!"
           return  x
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 getOneComment :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m Comment
@@ -62,10 +72,8 @@ getOneComment h idE = do
       i <- withConn (hPool h) $ \conn -> query conn qComment [idE] :: IO [Comment]
       case i of
         [x] -> do
-        --   writeLogD "getOne Comment success!"
           return  x
         _ -> do
-        --   writeLogE (errorText DataErrorPostgreSQL)
           throwError DataErrorPostgreSQL
 
 getOneCategory :: PG  m => Database.DatabaseCommon.Handle ->  Int -> m Category
@@ -81,7 +89,6 @@ getOneCategory h idE = do
       i <- withConn (hPool h) $ \conn -> query conn qCategory [idE] :: IO [CategoryRaw]
       if null i
         then do
-        --   writeLogE (errorText ErrorConvert ++ " finalCategoryConvert")
           throwError DataErrorPostgreSQL
         else do
           let cat = head $ impureNonNull $ convertCategoryRawArray i
@@ -93,10 +100,8 @@ getOneDraft h idE idA = do
   resultDraft <- withConn (hPool h) $ \conn -> query conn qry (idA, idE) :: IO [Draft]
   case resultDraft of
     [x] -> do
-        --   writeLogD "getOne Draft success!"
           return  x
     _ -> do
-        --   writeLogE "getOneDraft DataErrorPostgreSQL "
           throwError DataErrorPostgreSQL
   where qry =
               "SELECT  draft.id_draft, \

@@ -32,6 +32,13 @@ packages:
       sha256: 31e80448992dc8642295172aee17de0179ff037c15b4eee4b4050a925430c7bf
   original:
     hackage: string-random-0.1.3.0
+- completed:
+    hackage: text-time-0.3.1@sha256:c4301ea47bcb72deb60b0be25cf6f6b693a34a862ea9a8e9bc8b9a750e0857e9,1757
+    pantry-tree:
+      size: 638
+      sha256: 0f3cc12775c099769901af4708a4ac04cdc9cbca8b22747be0c82c9c916d7e24
+  original:
+    hackage: text-time-0.3.1
 snapshots:
 - completed:
     size: 563099

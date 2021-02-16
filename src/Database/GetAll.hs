@@ -1,8 +1,25 @@
 module Database.GetAll where
 
 import Database.ImportDatabase
-import Database.DatabaseCommon 
-import ClassyPrelude 
+    ( Monad(return),
+      MonadError(throwError),
+      query,
+      query_,
+      Draft,
+      Tag,
+      ErrorServer(DataErrorPostgreSQL),
+      UserId,
+      convertCategoryRawArray,
+      Category,
+      CategoryRaw,
+      Author,
+      User,
+      convertNewsRaw,
+      News,
+      NewsRaw )
+import Database.DatabaseCommon
+    ( requestForPost, withConn, Handle(hPool), PG ) 
+import ClassyPrelude ( ($), IO, (++), map, null ) 
 
 getAllAuthor :: PG  m => Database.DatabaseCommon.Handle ->  m [Author]
 getAllAuthor h = do
@@ -10,10 +27,8 @@ getAllAuthor h = do
     result <- withConn (hPool h) $ \conn -> query_ conn qAuthor :: IO [Author]
     case result of
       [] -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
       authorsArray -> do
-        -- writeLogD "gett all author success!"
         return  authorsArray
 
 
@@ -23,10 +38,8 @@ getAllUser h = do
     result <- withConn (hPool h) $ \conn -> query_ conn qUser :: IO [User]
     case result of
       [] -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
       users -> do
-        -- writeLogD "gett all user success!"
         return users
 
 getAllTag :: PG  m => Database.DatabaseCommon.Handle ->  m [Tag]
@@ -35,10 +48,8 @@ getAllTag h = do
     result <- withConn (hPool h) $ \conn -> query_ conn qTag :: IO [Tag]
     case result of
       [] -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
       users -> do
-        -- writeLogD "gett all Tag success!"
         return  users
 
 getAllCategory :: PG  m => Database.DatabaseCommon.Handle ->  m [Category]
@@ -54,10 +65,8 @@ getAllCategory h = do
     result <- withConn (hPool h) $ \conn -> query_ conn qCat :: IO [CategoryRaw]
     case result of
       [] -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
       cat -> do
-        -- writeLogD "gett all Category success!"
         return $ convertCategoryRawArray cat
 
 
@@ -67,10 +76,8 @@ getAllNews h = do
     result <- withConn (hPool h) $ \conn -> query_ conn qDraft :: IO [NewsRaw]
     case result of
       [] -> do
-        -- writeLogE (errorText DataErrorPostgreSQL)
         throwError DataErrorPostgreSQL
       news -> do
-        -- writeLogD "gett all News success!"
         return $  map convertNewsRaw news
 
 
@@ -91,8 +98,6 @@ getAllDraft h uId = do
   result <- withConn (hPool h) $ \conn -> query conn q [uId] :: IO [Draft]
   if null result
     then do
-    --   writeLogE $ errorText DataErrorPostgreSQL ++ " not draft "
       throwError DataErrorPostgreSQL
     else do
-    --   writeLogD "Get all draft for user"
       return  result

@@ -1,9 +1,18 @@
 module Entity.User  where
 
 import ClassyPrelude
-import Database.PostgreSQL.Simple.FromField 
-import Entity.Auth 
+    ( Eq, Show, Applicative((<*>)), Generic, Text, (<$>), UTCTime )
+import Database.PostgreSQL.Simple.FromField
+    ( fromJSONField, FromField(..) ) 
+import Entity.Auth ( IsAdmin, IsAuthor, Login, Password, UserId ) 
 import Entity.ImportLibrary
+    ( FromJSON,
+      ToJSON,
+      field,
+      toJSONField,
+      FromRow(..),
+      ToField(..),
+      ToRow(..) )
 
 data User =
   User

@@ -3,7 +3,15 @@ module Entity.Author  where
 import Database.PostgreSQL.Simple.FromField (FromField(..), fromJSONField)
 import Entity.Auth (UserId)
 import Entity.ImportLibrary
-import ClassyPrelude  
+    ( FromJSON,
+      ToJSON,
+      field,
+      toJSONField,
+      FromRow(..),
+      ToField(..),
+      ToRow(..) )
+import ClassyPrelude
+    ( Eq, Show, Applicative((<*>)), Generic, Int, Text, (<$>) )  
 
 data Author =
   Author

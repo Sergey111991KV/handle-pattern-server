@@ -2,7 +2,26 @@ module Entity.ParseRowEntity where
 
 
 import ClassyPrelude
-
+    ( ($),
+      Typeable,
+      Applicative((<*), pure, (*>)),
+      Monoid(mconcat),
+      Bool(True),
+      Int,
+      Maybe(..),
+      Either(Right, Left),
+      Text,
+      ByteString,
+      Alternative((<|>), many),
+      (<$>),
+      maybe,
+      unpack,
+      formatTime,
+      defaultTimeLocale,
+      parseTimeM,
+      (.),
+      Utf8(decodeUtf8),
+      UTCTime )
 import qualified Data.Attoparsec.ByteString.Char8 as A
 import qualified Data.ByteString.Char8 as B
 import Data.Time (ZonedTime, zonedTimeToUTC)

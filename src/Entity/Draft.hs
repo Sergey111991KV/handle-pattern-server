@@ -3,8 +3,8 @@
 module Entity.Draft where
 
 import ClassyPrelude
-import Entity.ImportLibrary 
-
+    ( Eq, Ord, Show, Generic, Int, Maybe, Text, UTCTime )
+import Entity.ImportLibrary ( FromJSON, ToJSON, FromRow, ToRow ) 
 import qualified Database.PostgreSQL.Simple.Types as P
 
 data Draft =

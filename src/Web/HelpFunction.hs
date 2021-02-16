@@ -1,20 +1,27 @@
 module Web.HelpFunction where
 
 import ClassyPrelude
+    ( ($),
+      Monad(return),
+      Applicative(pure),
+      Maybe(..),
+      ByteString,
+      either,
+      (++),
+      pack,
+      IsMap(lookup),
+      LazySequence(fromStrict),
+      Utf8(encodeUtf8) )
 import Entity.ExportEntity
+    ( errorText,
+      ErrorServer(ErrorConvert, ErrorGetCookie),
+      SessionId(SessionId) )
 import qualified Network.HTTP.Types as HTTP
 import qualified Network.Wai as HTTP
-import Data.Aeson
-import Control.Monad.Except
+import Data.Aeson ( ToJSON(toEncoding), fromEncoding )
+import Control.Monad.Except ( MonadError(throwError) )
 import Text.Parsec as Parsec
-
-
-
--- serverErrorResponse :: Monad m => ErrorServer ->  m HTTP.Response
--- serverErrorResponse err = do
---         pure $ HTTP.responseLBS HTTP.status404 [] "Error"
---         -- (encodeUtf8 $ fromStrict $ errorText err)
-
+    ( Parsec, char, digit, letter, many1, (<|>), parse )
 
 serverNotAcceessAuthor :: Monad m =>  m HTTP.Response
 serverNotAcceessAuthor = do

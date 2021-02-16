@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c0874a97be4f49a79caa02a94be9044fdabf281b047a10b84a8ed4302e082667
+-- hash: 28bd03ea93d3364afe7172517a500f50e97b5c3ffaf3a782694bc516ff7651d4
 
 name:           handle-pattern-server
 version:        0.1.0.0
@@ -78,6 +78,7 @@ library
     , resource-pool
     , string-random
     , text
+    , text-time
     , time
     , wai
     , warp
@@ -112,6 +113,7 @@ executable handle-pattern-server-exe
     , resource-pool
     , string-random
     , text
+    , text-time
     , time
     , wai
     , warp
@@ -144,6 +146,7 @@ test-suite handle-pattern-server-test
     , resource-pool
     , string-random
     , text
+    , text-time
     , time
     , wai
     , warp

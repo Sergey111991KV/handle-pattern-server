@@ -2,13 +2,33 @@ module Entity.Category   where
 
 
 import ClassyPrelude
+    ( ($),
+      Eq((==)),
+      Show,
+      Applicative(pure, (<*>)),
+      Generic,
+      Int,
+      Maybe(..),
+      Text,
+      (<$>),
+      (++),
+      unpack )
 import qualified Data.Attoparsec.ByteString.Char8 as A
 import Database.PostgreSQL.Simple.FromField (FromField(..), fromJSONField)
 import Entity.ImportLibrary
+    ( FromJSON,
+      ToJSON,
+      Value(Null),
+      Action(Plain, Many),
+      char8,
+      field,
+      toJSONField,
+      FromRow(..),
+      ToField(..),
+      ToRow(..) )
 import Entity.ParseRowEntity
-
+    ( fromPGRow', parseMaybeInt, textContent )
 import Database.PostgreSQL.Simple.Types (PGArray(PGArray))
-
 import qualified Prelude as P
 
 data Category =

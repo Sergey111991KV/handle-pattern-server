@@ -39,6 +39,7 @@ dependencies:
 - attoparsec
 - classy-prelude
 - string-random
+- text-time
 
 library:
   when:

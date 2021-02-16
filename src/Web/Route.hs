@@ -9,17 +9,15 @@ import Control.Monad.Catch
 import Control.Monad.Except
 import Control.Monad.Reader    
 import Control.Monad.Trans     
-
 import Data.Aeson
 import qualified Data.ByteString.Lazy as BL
-
 import qualified Logger as Logger
 import qualified Database.ExportDatabase as DB
 import Entity.ExportEntity
 import Web.HelpFunction
 import qualified Prelude as P
 
-data Config = Config {
+newtype Config = Config {
     port :: Int
     }  deriving (Show, Generic)
 
@@ -31,10 +29,6 @@ data Handle = Handle
 
 type HTTPMonad m
    = (Monad m, MonadIO m, MonadError ErrorServer m, MonadReader Web.Route.Handle m)
-
-
-
-
 
 methodAndPath :: HTTP.Request -> API
 methodAndPath req =
@@ -58,9 +52,6 @@ data API
   | UNKNOWN
   deriving (Show, Eq)
 
--- DB.checkAdminAccess serverNotAcceessAdmin
--- checkAuthorAccess serverNotAcceessAuthor
-
 route :: HTTPMonad m
   => HTTP.Request -> m HTTP.Response
 route req = do
@@ -80,7 +71,9 @@ route req = do
         autorized sess db = do 
             case methodAndPath req of   
                 GET  ["auth","exit"] -> do
+                    print sess
                     DB.findUserIdBySession db sess >>= DB.deleteOldSession db
+                     
                     return $ successResponse   ("auth exit" :: Text)
                 
                 GET  ["publish", idE] -> do
@@ -90,11 +83,10 @@ route req = do
                         DB.findUserIdBySession db sess >>= DB.publishNews db unpackIdEntity
                         return $ successResponse   ("publish news" :: Text)
                     else serverNotAcceessAuthor 
-                    
+
                 GET  ["news", "sortedNews", condition ] -> do
                     news <- DB.sortedNews db condition
                     return $ successResponse news 
-
                 GET  ["news", "filterAuthor", condition ] -> do
                     let unpackIdAuthor = P.read $ unpack condition :: Int 
                     news <- DB.filterAuthor db unpackIdAuthor
@@ -131,12 +123,18 @@ route req = do
                     users <- DB.getAllUser db 
                     return $ successResponse  users
                 GET  ["author", idE] -> do
-                    let unpackIdEntity = P.read $ unpack idE :: Int 
-                    author <- DB.getOneAuthor db  unpackIdEntity
-                    return $ successResponse  author
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        let unpackIdEntity = P.read $ unpack idE :: Int 
+                        author <- DB.getOneAuthor db  unpackIdEntity
+                        return $ successResponse  author
+                    else serverNotAcceessAdmin 
                 GET  ["authors"] -> do
-                    authors <- DB.getAllAuthor db 
-                    return $ successResponse  authors
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        authors <- DB.getAllAuthor db 
+                        return $ successResponse  authors
+                    else serverNotAcceessAdmin 
                 GET  ["category", idE] -> do   
                     let unpackIdEntity = P.read $ unpack idE :: Int 
                     category <- DB.getOneCategory db  unpackIdEntity
@@ -149,12 +147,18 @@ route req = do
                     comment <- DB.getOneComment db  unpackIdEntity
                     return $ successResponse  comment
                 GET  ["draft", idE] -> do
-                    let unpackIdEntity = P.read $ unpack idE :: Int 
-                    draft <-  DB.findUserIdBySession db sess >>=  DB.getOneDraft db  unpackIdEntity
-                    return $ successResponse  draft
+                    aceess <- DB.checkAuthorAccess db sess
+                    if  aceess  then do
+                        let unpackIdEntity = P.read $ unpack idE :: Int 
+                        draft <-  DB.findUserIdBySession db sess >>=  DB.getOneDraft db  unpackIdEntity
+                        return $ successResponse  draft
+                    else serverNotAcceessAuthor 
                 GET  ["drafts"] -> do
-                    drafts <-  DB.findUserIdBySession db sess >>= DB.getAllDraft db 
-                    return $ successResponse drafts
+                    aceess <- DB.checkAuthorAccess db sess
+                    if  aceess  then do
+                        drafts <-  DB.findUserIdBySession db sess >>= DB.getAllDraft db 
+                        return $ successResponse drafts
+                    else serverNotAcceessAuthor 
                 GET  ["tag", idE] -> do
                     let unpackIdEntity = P.read $ unpack idE :: Int 
                     tag <- DB.getOneTag db  unpackIdEntity
@@ -176,30 +180,42 @@ route req = do
                     DB.createUser db  user
                     return $ successResponse  ("success create user" :: Text)
                 POST  ["author"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (author :: Author) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.createAuthor db  author
-                    return $ successResponse  ("success create author" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (author :: Author) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.createAuthor db  author
+                        return $ successResponse  ("success create author" :: Text)
+                    else serverNotAcceessAdmin 
                 POST  ["category"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (category :: Category) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.createCategory db  category
-                    return $ successResponse  ("success create category" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (category :: Category) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.createCategory db  category
+                        return $ successResponse  ("success create category" :: Text)
+                    else serverNotAcceessAdmin 
                 POST  ["comment"] -> do
                     reqBody <- liftIO $ HTTP.getRequestBodyChunk req
                     (comment :: Comment) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
                     DB.createComment db  comment
                     return $ successResponse  ("success create comment" :: Text)
                 POST  ["draft"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (category :: Draft) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.createDraft db  category
-                    return $ successResponse  ("success create draft" :: Text)
+                    aceess <- DB.checkAuthorAccess db sess
+                    if  aceess  then do
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (category :: Draft) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.createDraft db  category
+                        return $ successResponse  ("success create draft" :: Text)
+                    else serverNotAcceessAuthor 
                 POST  ["tag"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (comment :: Tag) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.createTag db  comment
-                    return $ successResponse  ("success create tag" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do 
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (comment :: Tag) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.createTag db  comment
+                        return $ successResponse  ("success create tag" :: Text)
+                    else serverNotAcceessAdmin 
 
                 PUT  ["user"] -> do
                     reqBody <- liftIO $ HTTP.getRequestBodyChunk req
@@ -207,51 +223,78 @@ route req = do
                     DB.editingUser db  user
                     return $ successResponse  ("success create user" :: Text)
                 PUT  ["author"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (author :: Author) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.editingAuthor db  author
-                    return $ successResponse  ("success create author" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (author :: Author) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.editingAuthor db  author
+                        return $ successResponse  ("success create author" :: Text)
+                    else serverNotAcceessAdmin 
                 PUT  ["category"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (category :: Category) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.editingCategory db  category
-                    return $ successResponse  ("success create category" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (category :: Category) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.editingCategory db  category
+                        return $ successResponse  ("success create category" :: Text)
+                    else serverNotAcceessAdmin 
                 PUT  ["comment"] -> do
                     reqBody <- liftIO $ HTTP.getRequestBodyChunk req
                     (comment :: Comment) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
                     DB.editingComment db  comment
                     return $ successResponse  ("success create comment" :: Text)
                 PUT  ["draft"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (category :: Draft) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.editingDraft db  category
-                    return $ successResponse  ("success create draft" :: Text)
+                    aceess <- DB.checkAuthorAccess db sess
+                    if  aceess  then do
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (category :: Draft) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.editingDraft db  category
+                        return $ successResponse  ("success create draft" :: Text)
+                    else serverNotAcceessAuthor 
                 PUT  ["tag"] -> do
-                    reqBody <- liftIO $ HTTP.getRequestBodyChunk req
-                    (comment :: Tag) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
-                    DB.editingTag db  comment
-                    return $ successResponse  ("success create tag" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do 
+                        reqBody <- liftIO $ HTTP.getRequestBodyChunk req
+                        (comment :: Tag) <- either (\_ -> throwError ErrorConvert) pure (eitherDecode $ fromStrict reqBody)
+                        DB.editingTag db  comment
+                        return $ successResponse  ("success create tag" :: Text)
+                    else serverNotAcceessAdmin 
 
                 DELETE  ["user", idE] -> do
-                    let unpackIdEntity = P.read $ unpack  idE :: Int 
-                    DB.removeUser db  unpackIdEntity
-                    return $ successResponse  ("delete create user" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        let unpackIdEntity = P.read $ unpack  idE :: Int 
+                        DB.removeUser db  unpackIdEntity
+                        return $ successResponse  ("delete create user" :: Text)
+                    else serverNotAcceessAdmin 
                 DELETE  ["author", idE] -> do
-                    let unpackIdEntity = P.read $ unpack  idE :: Int 
-                    DB.removeAuthor db  unpackIdEntity
-                    return $ successResponse   ("delete create author" :: Text)
-                DELETE  ["category", idE] -> do   
-                    let unpackIdEntity = P.read $ unpack  idE :: Int 
-                    DB.removeCategory db  unpackIdEntity
-                    return $ successResponse  ("delete create category" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do
+                        let unpackIdEntity = P.read $ unpack  idE :: Int 
+                        DB.removeAuthor db  unpackIdEntity
+                        return $ successResponse   ("delete create author" :: Text)
+                    else serverNotAcceessAdmin
+                DELETE  ["category", idE] -> do  
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do 
+                        let unpackIdEntity = P.read $ unpack  idE :: Int 
+                        DB.removeCategory db  unpackIdEntity
+                        return $ successResponse  ("delete create category" :: Text)
+                    else serverNotAcceessAdmin 
                 DELETE  ["draft", idE] -> do
-                    let unpackIdEntity = P.read $ unpack  idE :: Int 
-                    DB.findUserIdBySession db sess >>= DB.removeDraft db unpackIdEntity
-                    return $ successResponse  ("delete create draft" :: Text)
+                    aceess <- DB.checkAuthorAccess db sess
+                    if  aceess  then do
+                        let unpackIdEntity = P.read $ unpack  idE :: Int 
+                        DB.findUserIdBySession db sess >>= DB.removeDraft db unpackIdEntity
+                        return $ successResponse  ("delete create draft" :: Text)
+                    else serverNotAcceessAuthor 
                 DELETE  ["tag", idE] -> do
-                    let unpackIdEntity = P.read $ unpack  idE :: Int 
-                    DB.removeTag db  unpackIdEntity
-                    return $ successResponse   ("delete create tag" :: Text)
+                    aceess <- DB.checkAdminAccess db sess
+                    if  aceess  then do 
+                        let unpackIdEntity = P.read $ unpack  idE :: Int 
+                        DB.removeTag db  unpackIdEntity
+                        return $ successResponse   ("delete create tag" :: Text)
+                    else serverNotAcceessAdmin 
                 DELETE  ["news", idE] -> do
                     let unpackIdEntity = P.read $ unpack  idE :: Int 
                     DB.removeNews db  unpackIdEntity

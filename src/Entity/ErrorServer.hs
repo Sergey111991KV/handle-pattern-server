@@ -1,7 +1,6 @@
 module Entity.ErrorServer where
 
-import Entity.ImportLibrary 
-import ClassyPrelude
+import ClassyPrelude ( ($), Read, Show(show), Text, pack )
 
 data ErrorServer = 
         ErrorConnection | 
